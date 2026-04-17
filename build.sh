@@ -1,3 +1,12 @@
+#!/data/data/com.termux/files/usr/bin/bash
+
+set -e
+
+echo "[*] Writing Python 3.13 workflow..."
+
+mkdir -p .github/workflows
+
+cat > .github/workflows/build.yml << 'EOF'
 name: build-pydantic-android
 
 on:
@@ -44,3 +53,21 @@ jobs:
         with:
           name: wheel
           path: pydantic_core-*/target/wheels/*.whl
+EOF
+
+echo "[*] Committing workflow..."
+git add .
+git commit -m "python 3.13 build fix" || echo "[*] No changes"
+git push
+
+echo "[*] Triggering workflow..."
+gh workflow run build.yml
+
+sleep 5
+
+RUN_ID=$(gh run list --limit 1 --json databaseId -q '.[0].databaseId')
+
+echo "[*] Watching build..."
+gh run watch $RUN_ID
+
+echo "[*] Done"
