@@ -1,28 +1,10 @@
-name: Build pydantic-core (Android)
+name: build-android
 
-on: [workflow_dispatch]
+on:
+  workflow_dispatch:
 
 jobs:
-  build:
+  test:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-
-      - run: rustup target add aarch64-linux-android
-
-      - run: |
-          pip install maturin
-          sudo apt-get update
-          sudo apt-get install -y gcc-aarch64-linux-gnu
-
-      - run: pip download pydantic-core --no-binary=:all:
-
-      - run: |
-          cd pydantic-core*
-          maturin build --release --target aarch64-linux-android
-
-      - uses: actions/upload-artifact@v4
-        with:
-          name: wheel
-          path: pydantic-core*/target/wheels/*.whl
+      - run: echo "Workflow trigger works"
