@@ -10,30 +10,27 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Setup Python 3.13
+      - name: Setup Python 3.11
         uses: actions/setup-python@v5
         with:
-          python-version: "3.13"
+          python-version: "3.11"
 
       - name: Install Rust + target
-        run: |
-          rustup target add aarch64-linux-android
+        run: rustup target add aarch64-linux-android
 
-      - name: Install build deps
+      - name: Install deps
         run: |
           pip install maturin
           sudo apt-get update
           sudo apt-get install -y gcc-aarch64-linux-gnu
 
       - name: Download source
-        run: |
-          pip download pydantic-core --no-binary=:all:
+        run: pip download pydantic-core --no-binary=:all:
 
-      - name: Build wheel (ABI3)
+      - name: Build wheel
         run: |
           export PYO3_CROSS=1
-          export PYO3_CROSS_PYTHON_VERSION=3.13
-          export PYO3_USE_ABI3_FORWARD_COMPATIBILITY=1
+          export PYO3_CROSS_PYTHON_VERSION=3.11
           tar -xf pydantic_core-*.tar.gz
           DIR=$(ls -d pydantic_core-* | head -n 1)
           cd "$DIR"
