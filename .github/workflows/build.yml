@@ -28,14 +28,16 @@ jobs:
       - name: Download source
         run: |
           pip download pydantic-core --no-binary=:all:
+          ls
 
       - name: Build wheel
         run: |
-          cd pydantic-core*
+          tar -xf pydantic_core-*.tar.gz
+          cd pydantic_core-*
           maturin build --release --target aarch64-linux-android
 
       - name: Upload wheel
         uses: actions/upload-artifact@v4
         with:
           name: wheel
-          path: pydantic-core*/target/wheels/*.whl
+          path: pydantic_core-*/target/wheels/*.whl
