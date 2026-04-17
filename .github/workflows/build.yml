@@ -33,7 +33,8 @@ jobs:
       - name: Build wheel
         run: |
           tar -xf pydantic_core-*.tar.gz
-          cd pydantic_core-*
+          DIR=$(ls -d pydantic_core-* | head -n 1)
+          cd "$DIR"
           maturin build --release --target aarch64-linux-android
 
       - name: Upload wheel
