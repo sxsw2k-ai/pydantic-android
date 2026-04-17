@@ -4,9 +4,16 @@ set -e
 
 REPO="pydantic-android"
 
-echo "[*] Creating repo..."
-gh repo create $REPO --public --clone || true
-cd $REPO
+echo "[*] Ensuring repo exists locally..."
+
+if [ -d "$REPO" ]; then
+    echo "[*] Local repo exists, using it"
+    cd "$REPO"
+else
+    echo "[*] Cloning existing repo..."
+    gh repo clone "$REPO"
+    cd "$REPO"
+fi
 
 echo "[*] Creating workflow..."
 mkdir -p .github/workflows
@@ -44,7 +51,7 @@ EOF
 
 echo "[*] Pushing workflow..."
 git add .
-git commit -m "Add build workflow" || true
+git commit -m "Update workflow" || echo "[*] No changes to commit"
 git push
 
 echo "[*] Triggering workflow..."
@@ -52,7 +59,6 @@ gh workflow run "Build pydantic-core (Android)"
 
 sleep 5
 
-echo "[*] Getting latest run ID..."
 RUN_ID=$(gh run list --limit 1 --json databaseId -q '.[0].databaseId')
 
 echo "[*] Watching build..."
